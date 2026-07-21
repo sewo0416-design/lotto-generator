@@ -913,49 +913,249 @@ footer {
 
 @media (max-width: 640px) {
   .page {
-    padding: 40px 18px 90px;
+    padding: 36px 16px 80px;
+  }
+  header.hero {
+    margin-bottom: 32px;
   }
   header.hero h1 {
-    font-size: 28px;
+    font-size: 26px;
+    margin: 0 0 10px;
+  }
+  header.hero p {
+    font-size: 14px;
   }
   .card {
-    padding: 24px;
+    padding: 20px;
     border-radius: 20px;
+    margin-bottom: 20px;
   }
+  .card h2 {
+    font-size: 18px;
+    margin: 0 0 14px;
+  }
+  .card .card-desc {
+    font-size: 14px;
+    margin: -8px 0 16px;
+  }
+
+  /* 탭 내비게이션 */
+  .tabs {
+    padding: 6px;
+    gap: 4px;
+    border-radius: 16px;
+    margin-bottom: 20px;
+  }
+  .tab-btn {
+    font-size: 12px;
+    padding: 12px 4px;
+    border-radius: 11px;
+  }
+
+  /* 번호 생성 버튼/결과 */
+  .generate-btn {
+    padding: 16px;
+    font-size: 16px;
+    border-radius: 16px;
+    margin-bottom: 20px;
+  }
+  .sets-header-label {
+    font-size: 13px;
+  }
+  .copy-all-btn {
+    padding: 8px 12px;
+    font-size: 12px;
+  }
+  .set-row {
+    gap: 10px;
+    padding: 14px 0;
+  }
+  .ball {
+    width: 33px;
+    height: 33px;
+    font-size: 14px;
+  }
+  .set-label {
+    width: 22px;
+    height: 22px;
+    font-size: 12px;
+  }
+  .set-actions {
+    margin-left: 32px;
+    gap: 8px;
+  }
+  .set-meta {
+    font-size: 12px;
+  }
+  .copy-btn {
+    padding: 7px 10px;
+    font-size: 12px;
+  }
+  .generate-warning {
+    font-size: 12px;
+    padding: 10px 14px;
+  }
+
+  /* 번호별 출현 빈도 차트 */
   .freq-chart {
     grid-template-columns: repeat(45, minmax(0, 1fr));
-    height: 130px;
+    height: 120px;
+    padding-top: 4px;
   }
   .freq-num,
   .freq-count {
     display: none;
   }
+  .freq-legend {
+    font-size: 12px;
+    gap: 12px;
+  }
+
+  /* 합계 구간 / 재출현 간격 히스토그램 */
   .sum-chart {
     gap: 3px;
+    height: 170px;
+    padding-top: 26px;
   }
-  .sum-count,
-  .sum-label {
+  .sum-count {
     font-size: 10px;
   }
-  .sum-pct {
+  .sum-label {
     font-size: 9px;
   }
+  .sum-pct {
+    font-size: 8px;
+  }
+
   .mini-lists,
   .mini-lists.mini-lists-3 {
     grid-template-columns: 1fr;
+    gap: 16px;
   }
-  .set-actions {
-    margin-left: 42px;
+  .highlight-stat {
+    font-size: 14px;
+    padding: 12px 14px;
   }
-  .tab-btn {
+
+  /* 자주 함께 나오는 번호 쌍 */
+  .pair-row {
+    gap: 10px;
+    padding: 12px 0;
+  }
+  .pair-count {
+    font-size: 12px;
+  }
+
+  /* 가로 막대(홀짝비율/AC값/구간별분포 등) */
+  .hbar-row,
+  .zone-row {
+    gap: 8px;
+    font-size: 12px;
+  }
+  .hbar-label {
+    width: 58px;
+  }
+  .hbar-value {
+    width: 84px;
+    font-size: 11px;
+  }
+  .zone-label {
+    width: 52px;
+  }
+  .zone-value {
+    width: 72px;
+    font-size: 11px;
+  }
+  .hbar-track,
+  .zone-track {
+    height: 16px;
+  }
+
+  /* 맞춤 번호 생성 (탭2) */
+  .section-heading {
+    margin: 4px 2px 12px;
+  }
+  .section-heading-title {
+    font-size: 15px;
+  }
+  .section-heading-desc {
+    font-size: 12px;
+  }
+  .advanced-toggle {
+    padding: 14px;
+    font-size: 14px;
+  }
+  .option-card {
+    margin-bottom: 16px;
+  }
+  .option-title {
+    font-size: 15px;
+  }
+  .switch-row input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+  }
+  .field-row select,
+  .field-row input[type="number"] {
+    padding: 12px 14px;
+    font-size: 14px;
+  }
+  .field-row input[type="number"] {
+    width: 84px;
+  }
+  .radio-row {
+    gap: 16px;
     font-size: 13px;
-    padding: 14px 6px;
   }
+  .dual-slider-labels {
+    font-size: 14px;
+  }
+
+  /* 원하는 번호 포함 그리드 */
   .number-picker {
-    grid-template-columns: repeat(7, 1fr);
+    grid-template-columns: repeat(6, 1fr);
     gap: 6px;
   }
   .pick-ball {
     font-size: 12px;
+  }
+
+  .reset-btn {
+    padding: 14px;
+    font-size: 14px;
+  }
+  footer {
+    font-size: 12px;
+    margin-top: 36px;
+  }
+}
+
+@media (max-width: 380px) {
+  .page {
+    padding: 28px 12px 72px;
+  }
+  header.hero h1 {
+    font-size: 22px;
+  }
+  .card {
+    padding: 16px;
+  }
+  .ball {
+    width: 30px;
+    height: 30px;
+    font-size: 13px;
+  }
+  .set-balls {
+    gap: 6px;
+  }
+  .number-picker {
+    grid-template-columns: repeat(5, 1fr);
+    gap: 5px;
+  }
+  .freq-chart {
+    height: 100px;
+  }
+  .sum-chart {
+    height: 150px;
   }
 }

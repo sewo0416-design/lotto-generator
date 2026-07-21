@@ -87,6 +87,9 @@ header.hero p {
   font-size: 15px;
   line-height: 1.6;
   margin: -12px 0 22px;
+  text-align: justify;
+  text-justify: inter-word;
+  word-break: keep-all;
 }
 
 /* 탭 내비게이션 */
@@ -791,18 +794,20 @@ header.hero p {
   top: 50%;
   left: 0;
   right: 0;
-  height: 6px;
-  background: var(--accent-soft);
-  border-radius: 3px;
+  height: 8px;
+  background: var(--card-elevated);
+  border: 1px solid var(--border);
+  border-radius: 4px;
   transform: translateY(-50%);
 }
 
 .dual-slider-fill {
   position: absolute;
   top: 50%;
-  height: 6px;
-  background: var(--accent);
-  border-radius: 3px;
+  height: 8px;
+  background: #ffffff;
+  border-radius: 4px;
+  box-shadow: 0 0 8px rgba(255, 255, 255, 0.35);
   transform: translateY(-50%);
 }
 
@@ -830,9 +835,9 @@ header.hero p {
   height: 22px;
   margin-top: 5px;
   border-radius: 50%;
-  background: var(--accent);
+  background: #ffffff;
   border: 3px solid var(--card);
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.4);
   cursor: pointer;
 }
 
@@ -846,9 +851,9 @@ header.hero p {
   width: 22px;
   height: 22px;
   border-radius: 50%;
-  background: var(--accent);
+  background: #ffffff;
   border: 3px solid var(--card);
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.4);
   cursor: pointer;
 }
 
@@ -1038,7 +1043,17 @@ footer {
   .mini-lists,
   .mini-lists.mini-lists-3 {
     grid-template-columns: 1fr;
-    gap: 14px;
+    gap: 18px;
+  }
+  /* TOP10류 목록은 세로로 10줄씩 늘어지지 않게, 항목 내부를 2열로 압축 */
+  .top-list {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    column-gap: 14px;
+    row-gap: 8px;
+  }
+  .top-list .mini-item {
+    margin-bottom: 0;
   }
   .highlight-stat {
     font-size: 14px;

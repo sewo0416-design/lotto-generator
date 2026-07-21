@@ -119,15 +119,27 @@ function renderSetsInto(containerId, sets) {
   });
 }
 
+const SETS_PER_GENERATE = 5;
+
 // 생성 버튼 + 결과 영역 + 전체복사 버튼 한 세트를 연결한다. 탭1과 탭2에서 각각 독립적으로 쓴다.
-function setupGeneratePanel({ btnId, containerId, copyAllBtnId, stats, config }) {
+function setupGeneratePanel({ btnId, containerId, copyAllBtnId, warningId, stats, config }) {
   const state = { sets: [] };
   const btn = document.getElementById(btnId);
   const copyAllBtn = document.getElementById(copyAllBtnId);
+  const warningEl = warningId ? document.getElementById(warningId) : null;
 
   const doGenerate = () => {
-    state.sets = generateSets(stats, config, 5);
+    state.sets = generateSets(stats, config, SETS_PER_GENERATE);
     renderSetsInto(containerId, state.sets);
+
+    if (warningEl) {
+      if (state.sets.length < SETS_PER_GENERATE) {
+        warningEl.textContent = `⚠️ 설정한 조건이 너무 까다로워서 ${SETS_PER_GENERATE}개 중 ${state.sets.length}개만 생성됐어요. 필터 조건을 조금 완화해보세요.`;
+        warningEl.hidden = false;
+      } else {
+        warningEl.hidden = true;
+      }
+    }
   };
 
   btn.addEventListener("click", doGenerate);
@@ -159,6 +171,9 @@ function initAdvancedToggle() {
 
 function renderActiveConfigSummary(config) {
   const active = [];
+  if (config.includeNumbers.enabled && config.includeNumbers.numbers.length > 0) {
+    active.push(`${config.includeNumbers.numbers.join(",")}번 포함`);
+  }
   if (config.oddEven.enabled) {
     const { manualMin, manualMax } = config.oddEven;
     active.push(
@@ -237,6 +252,66 @@ function bindDualSlider({ minEl, maxEl, fillEl, labelEl, format, getRange, setRa
 /* ---------- 탭 2: 맞춤 번호 생성 ---------- */
 function initConfigPanel(stats, config, onChange) {
   const resyncFns = [];
+
+  // 원하는 번호 포함
+  const includeEnabled = document.getElementById("opt-include-enabled");
+  const includeGrid = document.getElementById("opt-include-grid");
+  const includeHint = document.getElementById("opt-include-hint");
+  document.getElementById("opt-include-max-label").textContent = MAX_INCLUDE_NUMBERS;
+
+  const pickButtons = [];
+  for (let n = 1; n <= 45; n++) {
+    const pickBtn = document.createElement("button");
+    pickBtn.type = "button";
+    pickBtn.className = `pick-ball ${ballColor(n)}`;
+    pickBtn.textContent = n;
+    pickBtn.dataset.num = String(n);
+    pickBtn.addEventListener("click", () => {
+      const idx = config.includeNumbers.numbers.indexOf(n);
+      if (idx >= 0) {
+        config.includeNumbers.numbers.splice(idx, 1);
+      } else {
+        if (config.includeNumbers.numbers.length >= MAX_INCLUDE_NUMBERS) return;
+        config.includeNumbers.numbers.push(n);
+        config.includeNumbers.numbers.sort((a, b) => a - b);
+      }
+      syncInclude();
+      onChange();
+    });
+    includeGrid.appendChild(pickBtn);
+    pickButtons.push(pickBtn);
+  }
+
+  const syncInclude = () => {
+    const selected = new Set(config.includeNumbers.numbers);
+    const atMax = config.includeNumbers.numbers.length >= MAX_INCLUDE_NUMBERS;
+    pickButtons.forEach((pickBtn) => {
+      const n = Number(pickBtn.dataset.num);
+      const isSelected = selected.has(n);
+      pickBtn.classList.toggle("selected", isSelected);
+      pickBtn.disabled = !config.includeNumbers.enabled || (!isSelected && atMax);
+    });
+    if (!config.includeNumbers.enabled) {
+      includeHint.textContent = "";
+    } else if (config.includeNumbers.numbers.length === 0) {
+      includeHint.textContent = `0/${MAX_INCLUDE_NUMBERS}개 선택됨`;
+    } else {
+      includeHint.textContent = `${config.includeNumbers.numbers.length}/${MAX_INCLUDE_NUMBERS}개 선택됨 · ${config.includeNumbers.numbers.join(", ")}번 포함`;
+    }
+  };
+
+  const resyncInclude = () => {
+    includeEnabled.checked = config.includeNumbers.enabled;
+    syncInclude();
+  };
+  resyncInclude();
+  resyncFns.push(resyncInclude);
+
+  includeEnabled.addEventListener("change", () => {
+    config.includeNumbers.enabled = includeEnabled.checked;
+    syncInclude();
+    onChange();
+  });
 
   // 홀짝 비율 (항상 직접 범위 지정)
   const oddEnabled = document.getElementById("opt-oddeven-enabled");
@@ -884,6 +959,7 @@ function init() {
     btnId: "generate-btn",
     containerId: "generated-sets",
     copyAllBtnId: "copy-all-btn",
+    warningId: "generate-warning",
     stats,
     config,
   });
@@ -891,6 +967,7 @@ function init() {
     btnId: "generate-btn-2",
     containerId: "generated-sets-2",
     copyAllBtnId: "copy-all-btn-2",
+    warningId: "generate-warning-2",
     stats,
     config,
   });

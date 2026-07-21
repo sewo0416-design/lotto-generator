@@ -614,6 +614,58 @@ header.hero p {
   font-weight: 500;
 }
 
+/* 원하는 번호 포함 - 45개 번호 선택 그리드 */
+.number-picker {
+  display: grid;
+  grid-template-columns: repeat(9, 1fr);
+  gap: 8px;
+  margin-top: 16px;
+}
+
+.pick-ball {
+  width: 100%;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  border: none;
+  background: var(--card-elevated);
+  color: var(--text-muted);
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.1s, box-shadow 0.15s, background 0.15s, color 0.15s;
+}
+
+.pick-ball:hover:not(:disabled) {
+  background: var(--accent-soft);
+  color: var(--text);
+}
+
+.pick-ball.selected {
+  color: #fff;
+  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 0 0 3px var(--accent);
+  transform: scale(1.06);
+}
+
+.pick-ball.selected.ball-yellow { color: #5b4400; text-shadow: none; }
+.pick-ball.selected.ball-green { color: #35460a; text-shadow: none; }
+
+.pick-ball:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+/* 생성 결과가 부족할 때 보여주는 안내 문구 */
+.generate-warning {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text);
+  background: var(--card-elevated);
+  border-radius: 12px;
+  padding: 12px 16px;
+  margin: 0 0 16px;
+}
+
 .option-card {
   margin-bottom: 20px;
 }
@@ -898,5 +950,12 @@ footer {
   .tab-btn {
     font-size: 13px;
     padding: 14px 6px;
+  }
+  .number-picker {
+    grid-template-columns: repeat(7, 1fr);
+    gap: 6px;
+  }
+  .pick-ball {
+    font-size: 12px;
   }
 }

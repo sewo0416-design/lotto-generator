@@ -89,13 +89,19 @@ function computeNumberWeights(stats, config) {
   return w;
 }
 
-// 가중치에 비례한 확률로, 중복 없이 k개를 뽑는다.
-function weightedSampleWithoutReplacement(weights, k) {
+// 가중치에 비례한 확률로, 중복 없이 k개를 뽑는다. forced에 담긴 번호는 항상 결과에 포함시키고,
+// 나머지 자리만 가중치 추첨으로 채운다.
+function weightedSampleWithoutReplacement(weights, k, forced) {
+  const forcedList = (forced || []).slice(0, k);
+  const forcedSet = new Set(forcedList);
   const pool = [];
-  for (let n = 1; n <= 45; n++) pool.push({ n, w: weights[n] });
+  for (let n = 1; n <= 45; n++) {
+    if (!forcedSet.has(n)) pool.push({ n, w: weights[n] });
+  }
 
-  const result = [];
-  for (let i = 0; i < k; i++) {
+  const result = [...forcedList];
+  const need = k - result.length;
+  for (let i = 0; i < need; i++) {
     const total = pool.reduce((a, p) => a + p.w, 0);
     let r = Math.random() * total;
     let idx = 0;
@@ -145,21 +151,39 @@ function matchesZoneTargets(zones, zoneTargets) {
   return true;
 }
 
-function generateOneSet(stats, config) {
+function combinationKey(nums) {
+  return nums.join(",");
+}
+
+// count개(기본 5개)를 채울 때까지, 지정한 조건을 실제로 전부 만족하는 조합만 인정하며
+// 하나의 공유 시도 횟수 예산(TOTAL_ATTEMPT_BUDGET) 안에서 반복 추첨한다.
+// 조건이 너무 까다로워서 예산 안에 count개를 못 채우면, 찾은 만큼만(0개일 수도 있음) 반환한다.
+// (개별 조합마다 처음부터 다시 예산을 배정하지 않고 전체가 예산을 공유하므로,
+//  불가능한 조건이어도 응답 시간이 일정하게 제한된다.)
+const TOTAL_ATTEMPT_BUDGET = 60000;
+
+function generateSets(stats, config, count) {
   const weights = computeNumberWeights(stats, config);
+  const forced = config.includeNumbers.enabled ? config.includeNumbers.numbers : [];
   const oddRange = config.oddEven.enabled ? pickOddRange(stats, config) : null;
   const targetSum = config.sumRange.enabled ? pickTargetSumRange(stats, config) : null;
   const zoneTargets = config.zoneSpread.enabled ? config.zoneSpread.zoneTargets : null;
   const acRange = config.acRange.enabled ? pickAcRange(stats, config) : null;
-  const prevRepeatRange = config.prevRepeat.enabled ? pickPrevRepeatRange(stats, config) : null;
   const maxSameDigit = config.lastDigit.enabled ? config.lastDigit.maxSameDigit : null;
   const consecutiveMode = config.consecutive.enabled ? config.consecutive.mode : "auto";
 
-  const maxAttempts = 4000;
-  let best = null;
+  const results = [];
+  const seen = new Set();
 
-  for (let attempt = 0; attempt < maxAttempts; attempt++) {
-    const candidate = weightedSampleWithoutReplacement(weights, 6);
+  for (let attempt = 0; attempt < TOTAL_ATTEMPT_BUDGET && results.length < count; attempt++) {
+    // 미출현 기간처럼 "자동" 모드가 남아있는 조건은 시도할 때마다 목표를 다시 뽑아,
+    // 생성되는 5조합이 서로 다른 목표값을 가질 수 있게 한다.
+    const prevRepeatRange = config.prevRepeat.enabled ? pickPrevRepeatRange(stats, config) : null;
+
+    const candidate = weightedSampleWithoutReplacement(weights, 6, forced);
+    const key = combinationKey(candidate);
+    if (seen.has(key)) continue;
+
     const odd = oddCountOf(candidate);
     const sum = sumOf(candidate);
     const zones = zoneCountsOf(candidate, stats.zoneRanges);
@@ -181,35 +205,9 @@ function generateOneSet(stats, config) {
       prevRepeatRange === null || (prevRepeat >= prevRepeatRange.min && prevRepeat <= prevRepeatRange.max);
 
     if (matchesOdd && matchesSum && matchesAc && matchesPrevRepeat) {
-      return { nums: candidate, odd, sum };
+      seen.add(key);
+      results.push({ nums: candidate, odd, sum });
     }
-    if (!best && matchesOdd) {
-      best = { nums: candidate, odd, sum };
-    }
-  }
-
-  if (best) return best;
-
-  const fallback = weightedSampleWithoutReplacement(weights, 6);
-  return { nums: fallback, odd: oddCountOf(fallback), sum: sumOf(fallback) };
-}
-
-function combinationKey(nums) {
-  return nums.join(",");
-}
-
-function generateSets(stats, config, count) {
-  const results = [];
-  const seen = new Set();
-  let guard = 0;
-
-  while (results.length < count && guard < count * 50) {
-    guard++;
-    const set = generateOneSet(stats, config);
-    const key = combinationKey(set.nums);
-    if (seen.has(key)) continue;
-    seen.add(key);
-    results.push(set);
   }
 
   return results;

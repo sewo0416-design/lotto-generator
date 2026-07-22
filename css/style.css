@@ -90,8 +90,6 @@ header.hero p {
   font-size: 15px;
   line-height: 1.6;
   margin: -12px 0 22px;
-  text-align: justify;
-  text-justify: inter-word;
   word-break: keep-all;
   text-wrap: pretty;
 }

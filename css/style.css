@@ -12,6 +12,9 @@
   --accent-on: #181818;
   --hot-mark: #f2f2f2;
   --cold-mark: #717171;
+  /* 넓은 면적을 차지하는 차트 막대 전용 색. --accent보다 어둡게 잡아서,
+     OLED 화면의 자동 밝기 제한(ABL)으로 큰 면적이 실제보다 칙칙하게 보이는 걸 줄인다. */
+  --chart-fill: #999999;
 
   --yellow: #fbc400;
   --blue: #69c8f2;
@@ -548,7 +551,7 @@ header.hero p {
 
 .hbar-fill {
   height: 100%;
-  background: var(--accent);
+  background: var(--chart-fill);
   border-radius: 10px;
 }
 
@@ -595,7 +598,7 @@ header.hero p {
 
 .sum-bar {
   width: 100%;
-  background: var(--accent);
+  background: var(--chart-fill);
   border-radius: 6px 6px 0 0;
   opacity: 0.85;
 }
@@ -643,7 +646,7 @@ header.hero p {
 
 .zone-fill {
   height: 100%;
-  background: var(--accent);
+  background: var(--chart-fill);
   border-radius: 10px;
 }
 
